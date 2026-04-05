@@ -23,7 +23,7 @@ Personal Claude Code configuration — settings, permissions, and custom skills.
 - `npx` — prevent arbitrary package execution
 
 **Allowed (auto-approved):**
-- `cd` into `~/.claude/`, `C:/Users/Admin/.claude/`, `~/Development/`, and `C:/Development/` — both tilde and full Windows paths are listed since Claude Code may resolve either form; add the equivalent paths for other devices
+- `git -C *` — allows running git commands in any directory without `cd`, avoiding shell permission prompts entirely
 - Read-only git inspection (`git log`, `git diff`, `git status`)
 - npm introspection (`npm list`, `npm show`, `npm run`)
 - GitHub CLI (`gh auth`, `gh issue`, `gh pr`)
