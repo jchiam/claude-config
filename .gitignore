@@ -1,0 +1,16 @@
+# Credentials and secrets
+.credentials.json
+
+# Runtime and ephemeral state
+backups/
+file-history/
+ide/
+sessions/
+shell-snapshots/
+plans/
+projects/
+memory/
+
+# Plugin internal/cache files
+plugins/install-counts-cache.json
+plugins/blocklist.json

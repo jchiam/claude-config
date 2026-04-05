@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(npm publish:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(curl * | bash)",
+      "Bash(npx:*)"
+    ],
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:unpkg.com)",
+      "WebFetch(domain:app.unpkg.com)",
+      "WebFetch(domain:npmjs.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)",
+      "Bash(git status:*)",
+      "Bash(npm list:*)",
+      "Bash(npm show:*)",
+      "Bash(npm run:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh issue:*)",
+      "Bash(gh pr:*)",
+      "Edit(~/.claude/skills/**)"
+    ]
+  }
+}
