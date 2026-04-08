@@ -2,14 +2,18 @@
 
 Personal Claude Code configuration — settings, permissions, and custom skills.
 
+This repo also syncs skills to other AI tools (QoderWork, Qwen VSCode plugin).
+
 ## Structure
 
 ```
 .
-├── settings.json       # Global permissions (allow/deny lists)
+├── settings.json              # Global permissions (allow/deny lists)
+├── setup-skills-symlinks.sh   # macOS/Linux/Git Bash setup script
+├── setup-skills-symlinks.bat  # Windows setup script
 └── skills/
-    ├── commit/         # /commit skill
-    └── open-pr/        # /open-pr skill
+    ├── commit/                # /commit skill
+    └── open-pr/               # /open-pr skill
 ```
 
 ## Settings
@@ -32,7 +36,7 @@ Personal Claude Code configuration — settings, permissions, and custom skills.
 
 ## Skills
 
-Skills are invoked as slash commands inside Claude Code.
+Skills are invoked as slash commands inside Claude Code. They are also synced to QoderWork and Qwen VSCode plugin.
 
 ### `/commit`
 
@@ -41,6 +45,55 @@ Commits all uncommitted changes on the current branch. Analyzes the diff and spl
 ### `/open-pr`
 
 Opens a pull request against `master` for the current branch. Pushes the branch if not already pushed, then creates the PR via `gh pr create` with a structured summary and test plan derived from the commit history.
+
+## Cross-Platform Skill Sync
+
+This repo centrally manages AI skills and shares them across multiple tools using symlinks/junctions.
+
+### Architecture
+
+```
+skills/                    # Git-managed skills (source of truth)
+    ├── commit/
+    └── open-pr/
+         │
+         ├──symlink──→ ~/.qoderwork/skills/    # QoderWork desktop app
+         └──symlink──→ ~/.qwen/skills/         # Qwen VSCode plugin
+```
+
+### First-Time Setup
+
+Run the appropriate script for your platform:
+
+```bash
+# macOS / Linux / Git Bash
+./setup-skills-symlinks.sh
+
+# Windows Command Prompt (as Administrator)
+setup-skills-symlinks.bat
+```
+
+### Adding New Skills
+
+1. Create the skill in `skills/my-new-skill/SKILL.md`
+2. Run the setup script to create symlinks
+3. Commit and push: `git add skills/my-new-skill && git commit -m "Add my-new-skill"`
+
+### Syncing to New Machines
+
+```bash
+git clone https://github.com/jchiam/claude-config.git ~/.claude
+cd ~/.claude
+./setup-skills-symlinks.sh  # or .bat on Windows
+```
+
+### Platform Notes
+
+| Platform | Method | Admin Required |
+|----------|--------|----------------|
+| macOS/Linux | `ln -s` | No |
+| Windows (Git Bash) | Junction (`mklink /J`) | No |
+| Windows (CMD) | Junction (`mklink /J`) | Sometimes |
 
 ## What's gitignored
 
