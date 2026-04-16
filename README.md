@@ -16,7 +16,6 @@ This repo is the source of truth for `~/.claude`. A symlink points `~/.claude` t
 ├── setup-settings.sh          # macOS/Linux: generate settings.json from template
 ├── setup-settings.ps1         # Windows: generate settings.json from template
 └── skills/
-    ├── commit/                # /commit skill
     ├── open-pr/               # /open-pr skill
     ├── update-docs/           # /update-docs skill
     ├── apd-*/                 # APD skill suite (13 skills)
@@ -74,7 +73,6 @@ Skills are invoked as slash commands inside Claude Code. They are also synced to
 
 | Skill | Command | Description |
 |-------|---------|-------------|
-| commit | `/commit` | Analyzes diff, splits into logical commits, derives messages from repo style |
 | open-pr | `/open-pr` | Pushes branch and opens a PR via `gh pr create` with structured summary |
 | update-docs | `/update-docs` | Updates README and GitHub wiki to reflect recent repo changes |
 
@@ -146,6 +144,26 @@ setup-links.bat
 |----------|--------|----------------|
 | macOS/Linux | `ln -s` symlink | No |
 | Windows (CMD/Git Bash) | Junction (`mklink /J`) | No |
+
+## Plugins
+
+Plugins extend Claude Code with additional capabilities. Plugin state is managed in `plugins/`.
+
+### Installed
+
+| Plugin | Marketplace | Description |
+|--------|-------------|-------------|
+| `code-simplifier` | `claude-plugins-official` | Reviews changed code for reuse, quality, and efficiency |
+| `caveman` | `caveman` | Ultra-compressed communication mode to reduce token usage |
+
+### Marketplaces
+
+| Marketplace | Source |
+|-------------|--------|
+| `claude-plugins-official` | `anthropics/claude-plugins-official` (GitHub) |
+| `caveman` | `JuliusBrussee/caveman` (GitHub) |
+
+`plugins/installed_plugins.json` and `plugins/known_marketplaces.json` are committed — they define which plugins and marketplaces are registered. Plugin binaries (`plugins/cache/`) and runtime data (`plugins/data/`, `plugins/marketplaces/`) are gitignored.
 
 ## What's gitignored
 
