@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "plugins": {
+    "code-simplifier@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-04-12T17:43:10.307Z",
+        "lastUpdated": "2026-04-12T17:43:10.307Z",
+        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
+      }
+    ],
+    "caveman@caveman": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/caveman/caveman/63e797cd753b",
+        "version": "63e797cd753b",
+        "installedAt": "2026-04-13T02:05:33.948Z",
+        "lastUpdated": "2026-04-13T02:05:33.948Z",
+        "gitCommitSha": "63e797cd753b301374947a5ed975c21775d962b9"
+      }
+    ]
+  }
+}
