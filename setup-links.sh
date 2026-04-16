@@ -1,34 +1,25 @@
 #!/bin/bash
-# Cross-platform skill symlink setup script
-# This script creates symlinks from central git-managed skills to various AI tool directories
+# Sets up:
+#   1. ~/.claude symlink → this repo directory
+#   2. Skill symlinks from ~/.claude/skills to ~/.qoderwork/skills and ~/.qwen/skills
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
-
-# Configuration
-CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLAUDE_DIR="$HOME/.claude"
+SKILLS_DIR="$SCRIPT_DIR/skills"
 QODERWORK_SKILLS_DIR="$HOME/.qoderwork/skills"
 QWEN_SKILLS_DIR="$HOME/.qwen/skills"
 
-# Function to print status
-info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
 
-warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
+info()  { echo -e "${GREEN}[INFO]${NC}  $1"; }
+warn()  { echo -e "${YELLOW}[WARN]${NC}  $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
-
-# Check if running on Windows (Git Bash, MSYS, Cygwin)
 is_windows() {
     case "$(uname -s)" in
         CYGWIN*|MINGW*|MSYS*) return 0 ;;
@@ -36,85 +27,94 @@ is_windows() {
     esac
 }
 
-# Create symlink (cross-platform)
-create_link() {
+create_skill_link() {
     local source="$1"
     local target="$2"
-    local name=$(basename "$source")
+    local name=$(basename "$target")
 
-    # Remove existing file/link if it exists
     if [ -e "$target" ] || [ -L "$target" ]; then
-        warn "Removing existing $target"
         rm -rf "$target"
     fi
 
-    # Create parent directory if it doesn't exist
     mkdir -p "$(dirname "$target")"
 
     if is_windows; then
-        # Windows: Use mklink (requires Administrator privileges)
-        # Convert Unix paths to Windows paths
         local win_source=$(cygpath -w "$source" 2>/dev/null || echo "$source")
         local win_target=$(cygpath -w "$target" 2>/dev/null || echo "$target")
-
-        # Use junction for directories (doesn't require admin)
         cmd //c "mklink /J \"$win_target\" \"$win_source\"" > /dev/null 2>&1 && {
-            info "Created junction: $name -> $target"
+            info "Linked: $name"
         } || {
-            # Fallback to directory symlink (requires admin)
-            cmd //c "mklink /D \"$win_target\" \"$win_source\"" > /dev/null 2>&1 && {
-                info "Created symlink: $name -> $target"
-            } || {
-                error "Failed to create link for $name (may need Administrator privileges)"
+            cmd //c "mklink /D \"$win_target\" \"$win_source\"" > /dev/null 2>&1 || {
+                error "Failed to create link for $name (may need Administrator)"
                 return 1
             }
         }
     else
-        # macOS/Linux: Use standard symlinks
         ln -s "$source" "$target"
-        info "Created symlink: $name -> $target"
+        info "Linked: $name"
     fi
 }
 
-# Main setup function
-setup_skills() {
-    info "Setting up skill symlinks..."
-    info "Source: $CLAUDE_SKILLS_DIR"
+# Step 1: ~/.claude → this repo
+link_claude() {
+    info "Configuring $CLAUDE_DIR → $SCRIPT_DIR"
 
-    # Check if source directory exists
-    if [ ! -d "$CLAUDE_SKILLS_DIR" ]; then
-        error "Claude skills directory not found: $CLAUDE_SKILLS_DIR"
-        exit 1
+    if [ -L "$CLAUDE_DIR" ]; then
+        local current
+        current=$(readlink "$CLAUDE_DIR")
+        if [ "$current" = "$SCRIPT_DIR" ]; then
+            info "~/.claude already points to this repo. Skipping."
+            return
+        fi
+        warn "~/.claude currently points to: $current"
+        read -rp "Repoint to this repo? [y/N] " confirm
+        [[ "$confirm" =~ ^[yY]$ ]] || { info "Skipped ~/.claude link."; return; }
+        rm "$CLAUDE_DIR"
+    elif [ -d "$CLAUDE_DIR" ]; then
+        warn "~/.claude is a real directory (not a symlink)."
+        read -rp "Back it up and replace with symlink? [y/N] " confirm
+        [[ "$confirm" =~ ^[yY]$ ]] || { info "Skipped ~/.claude link."; return; }
+        local backup="${CLAUDE_DIR}.bak.$(date +%s)"
+        mv "$CLAUDE_DIR" "$backup"
+        warn "Backed up existing ~/.claude to: $backup"
     fi
 
-    # Find all skill directories in Claude skills folder
+    ln -s "$SCRIPT_DIR" "$CLAUDE_DIR"
+    info "Created: ~/.claude → $SCRIPT_DIR"
+}
+
+# Step 2: Sync skills to other tool directories
+sync_skills() {
+    info "Syncing skills to other tool directories..."
+
+    if [ ! -d "$SKILLS_DIR" ]; then
+        warn "Skills directory not found: $SKILLS_DIR"
+        return
+    fi
+
     local skills=()
-    for skill_path in "$CLAUDE_SKILLS_DIR"/*; do
-        if [ -d "$skill_path" ]; then
-            skills+=("$(basename "$skill_path")")
-        fi
+    for skill_path in "$SKILLS_DIR"/*/; do
+        [ -d "$skill_path" ] && skills+=("$(basename "$skill_path")")
     done
 
     if [ ${#skills[@]} -eq 0 ]; then
-        warn "No skills found in $CLAUDE_SKILLS_DIR"
-        exit 0
+        warn "No skills found in $SKILLS_DIR"
+        return
     fi
 
-    info "Found ${#skills[@]} skill(s): ${skills[*]}"
+    info "Found ${#skills[@]} skill(s)"
 
-    # Create symlinks for each tool
     for skill in "${skills[@]}"; do
-        local source="$CLAUDE_SKILLS_DIR/$skill"
-
-        # QoderWork
-        create_link "$source" "$QODERWORK_SKILLS_DIR/$skill"
-
-        # Qwen VSCode
-        create_link "$source" "$QWEN_SKILLS_DIR/$skill"
+        local source="$SKILLS_DIR/$skill"
+        create_skill_link "$source" "$QODERWORK_SKILLS_DIR/$skill"
+        create_skill_link "$source" "$QWEN_SKILLS_DIR/$skill"
     done
 
-    info "Setup complete!"
+    info "Skills synced."
 }
 
-# Run setup
-setup_skills
+link_claude
+echo ""
+sync_skills
+echo ""
+info "Links configured."
