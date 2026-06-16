@@ -25,6 +25,14 @@ telemetry/
 .caveman-active
 .gitkeep
 
+# Runtime timestamps and update state
+.last-cleanup
+.last-update-result.json
+plugins/.last_inuse_sweep
+
+# Local settings overrides (may contain credentials)
+settings.local.json
+
 # Plugin runtime (manifest files are committed; cache/data/marketplaces are not)
 plugins/cache/
 plugins/data/
