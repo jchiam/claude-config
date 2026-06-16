@@ -5,7 +5,7 @@
       "repo": "anthropics/claude-plugins-official"
     },
     "installLocation": "/Users/jchiam/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-04-16T09:56:10.089Z"
+    "lastUpdated": "2026-06-13T13:13:19.446Z"
   },
   "caveman": {
     "source": {
@@ -14,5 +14,13 @@
     },
     "installLocation": "/Users/jchiam/.claude/plugins/marketplaces/caveman",
     "lastUpdated": "2026-04-13T02:05:33.749Z"
+  },
+  "claude-obsidian-marketplace": {
+    "source": {
+      "source": "github",
+      "repo": "AgriciDaniel/claude-obsidian"
+    },
+    "installLocation": "/Users/jchiam/.claude/plugins/marketplaces/claude-obsidian-marketplace",
+    "lastUpdated": "2026-04-30T08:30:16.316Z"
   }
 }

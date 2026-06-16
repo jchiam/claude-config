@@ -20,6 +20,26 @@
         "lastUpdated": "2026-04-13T02:05:33.948Z",
         "gitCommitSha": "63e797cd753b301374947a5ed975c21775d962b9"
       }
+    ],
+    "code-modernization@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/b3ddbec9f373",
+        "version": "b3ddbec9f373",
+        "installedAt": "2026-04-29T08:34:54.976Z",
+        "lastUpdated": "2026-04-29T08:34:54.976Z",
+        "gitCommitSha": "b3ddbec9f373a4ce15b43f3bb031f3402eaf0b09"
+      }
+    ],
+    "claude-obsidian@claude-obsidian-marketplace": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-obsidian-marketplace/claude-obsidian/1.6.0",
+        "version": "1.6.0",
+        "installedAt": "2026-04-30T08:39:03.326Z",
+        "lastUpdated": "2026-04-30T08:39:03.326Z",
+        "gitCommitSha": "75d3b6feb77b96c6bb16599c4550cc9703553d87"
+      }
     ]
   }
 }
