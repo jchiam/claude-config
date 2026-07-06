@@ -24,11 +24,11 @@
     "code-modernization@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/0548efe42bc2",
-        "version": "0548efe42bc2",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/63d966557133",
+        "version": "63d966557133",
         "installedAt": "2026-04-29T08:34:54.976Z",
-        "lastUpdated": "2026-06-16T03:42:14.683Z",
-        "gitCommitSha": "0548efe42bc2d22ba499f0c4adfe02766bd8b3ba"
+        "lastUpdated": "2026-07-06T04:21:56.294Z",
+        "gitCommitSha": "63d966557133b90e4e8d8eca51fc3c1a5e44b49f"
       }
     ],
     "claude-obsidian@claude-obsidian-marketplace": [
@@ -39,6 +39,16 @@
         "installedAt": "2026-04-30T08:39:03.326Z",
         "lastUpdated": "2026-04-30T08:39:03.326Z",
         "gitCommitSha": "75d3b6feb77b96c6bb16599c4550cc9703553d87"
+      }
+    ],
+    "moe-kb@moe-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/moe-plugins/moe-kb/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-06-29T05:57:47.520Z",
+        "lastUpdated": "2026-06-29T05:57:47.520Z",
+        "gitCommitSha": "6183a0df3f250ded2535f23760fab434f94ec6aa"
       }
     ]
   }
