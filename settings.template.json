@@ -75,10 +75,6 @@
   },
   "enableAllProjectMcpServers": false,
   "allowedMcpServers": [],
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"/Users/jchiam/claude_config/plugins/cache/caveman/caveman/63e797cd753b/hooks/caveman-statusline.sh\""
-  },
   "enabledPlugins": {
     "code-simplifier@claude-plugins-official": true,
     "caveman@caveman": true

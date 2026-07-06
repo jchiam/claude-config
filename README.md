@@ -9,12 +9,10 @@ This repo is the source of truth for `~/.claude`. A symlink points `~/.claude` t
 ```
 .
 ├── settings.template.json     # Committed settings baseline (no secrets)
-├── setup.sh                   # macOS/Linux: full first-time setup (one command)
-├── setup.bat                  # Windows: full first-time setup (one command)
-├── setup-links.sh             # macOS/Linux/Git Bash: configure ~/.claude symlink + skill sync
-├── setup-links.bat            # Windows: configure .claude junction + skill sync
-├── setup-settings.sh          # macOS/Linux: generate settings.json from template
-├── setup-settings.ps1         # Windows: generate settings.json from template
+├── setup.sh                   # macOS/Linux/WSL: full first-time setup
+├── setup-links.sh             # macOS/Linux/WSL: configure ~/.claude symlink + skill sync
+├── setup-settings.sh          # macOS/Linux/WSL: generate settings.json from template
+├── statusline-command.sh      # Status line feature (bash + jq + git)
 └── skills/
     ├── open-pr/               # /open-pr skill
     ├── update-docs/           # /update-docs skill
@@ -50,20 +48,17 @@ This repo is the source of truth for `~/.claude`. A symlink points `~/.claude` t
 
 ### Generating settings.json
 
-Run the setup script for your platform (part of `setup.sh` / `setup.bat`):
+Run the setup script (part of `setup.sh`):
 
 ```bash
-# macOS / Linux
 ./setup-settings.sh
-
-# Windows (PowerShell)
-./setup-settings.ps1
 ```
 
-Both scripts will:
+This will:
 1. Copy `settings.template.json` as the base
 2. Prompt for `ANTHROPIC_AUTH_TOKEN` (skippable — key omitted if blank)
-3. Optionally run `gt tools configure claude-code` to inject OTEL/GovTech settings
+3. Auto-configure `statusLine` with the correct path for this machine
+4. Optionally run `gt tools configure claude-code` to inject OTEL/GovTech settings
 
 ## Skills
 
@@ -104,46 +99,86 @@ Skills are invoked as slash commands inside Claude Code. They are also synced to
 
 ## Setup
 
-### First-Time Setup (new machine)
+### macOS / Linux / WSL
 
 ```bash
-# macOS / Linux
 git clone <repo-url> ~/claude_config
 cd ~/claude_config
 ./setup.sh
-
-# Windows
-git clone <repo-url> %USERPROFILE%\claude_config
-cd %USERPROFILE%\claude_config
-setup.bat
 ```
 
-`setup.sh` / `setup.bat` runs both steps in order:
-1. **`setup-links`** — creates `~/.claude → this repo` symlink, then syncs all skills to `~/.qoderwork/skills/` and `~/.qwen/skills/`
-2. **`setup-settings`** — generates `settings.json` from template, prompts for credentials
+`setup.sh` runs both steps in order:
+1. **`setup-links.sh`** — creates `~/.claude → this repo` symlink, syncs skills to `~/.qoderwork/skills/` and `~/.qwen/skills/`
+2. **`setup-settings.sh`** — generates `settings.json` from template, prompts for credentials
+
+### Windows (PowerShell)
+
+Clone the repo, then run the following steps in PowerShell.
+
+**Step 1: Create junction** (run as Administrator, or with Developer Mode enabled)
+
+```powershell
+$repo = "$env:USERPROFILE\claude_config"
+$claude = "$env:USERPROFILE\.claude"
+
+if (Test-Path $claude) { Remove-Item $claude -Force -Recurse }
+New-Item -ItemType Junction -Path $claude -Target $repo
+```
+
+**Step 2: Sync skills** (repeat after adding new skills)
+
+```powershell
+$skillsDir = "$env:USERPROFILE\claude_config\skills"
+$targets = @("$env:USERPROFILE\.qoderwork\skills", "$env:USERPROFILE\.qwen\skills")
+
+foreach ($targetDir in $targets) {
+    if (-not (Test-Path $targetDir)) { New-Item -ItemType Directory -Path $targetDir -Force | Out-Null }
+    foreach ($skill in (Get-ChildItem $skillsDir -Directory)) {
+        $link = Join-Path $targetDir $skill.Name
+        if (Test-Path $link) { Remove-Item $link -Force -Recurse }
+        New-Item -ItemType Junction -Path $link -Target $skill.FullName -Force | Out-Null
+    }
+}
+Write-Host "Skills synced."
+```
+
+**Step 3: Generate settings.json**
+
+```powershell
+$repo = "$env:USERPROFILE\claude_config"
+$config = Get-Content "$repo\settings.template.json" -Raw | ConvertFrom-Json
+
+# Set auth token (press Enter to skip)
+$token = Read-Host "ANTHROPIC_AUTH_TOKEN (Enter to skip)"
+if ($token) {
+    $config.env | Add-Member -NotePropertyName "ANTHROPIC_AUTH_TOKEN" -NotePropertyValue $token -Force
+}
+
+# Optional: run gt tools configure claude-code after writing
+$config | ConvertTo-Json -Depth 20 | Set-Content "$repo\settings.json" -Encoding UTF8
+Write-Host "settings.json written."
+```
+
+### Status Line (optional, macOS/Linux only)
+
+`statusline-command.sh` provides an agnoster-style status line showing directory, git branch, model, and context usage. Requires `bash` + `jq` + `git`. Auto-configured by `setup-settings.sh`.
+
+To add manually (e.g. after `gt tools configure` overwrites settings.json), add to `settings.json`:
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "bash \"/path/to/claude_config/statusline-command.sh\""
+}
+```
+
+> **Windows:** Claude Code does not support command-type statusLine on Windows.
 
 ### Adding New Skills
 
 1. Create the skill in `skills/my-new-skill/SKILL.md`
-2. Re-run `./setup-links.sh` (or `setup-links.bat`) to sync to other tools
+2. Re-sync: `./setup-links.sh` (macOS/Linux) or re-run Step 2 above (Windows)
 3. Commit: `git add skills/my-new-skill && git commit -m "feat: add my-new-skill"`
-
-### Re-syncing Skills
-
-```bash
-# macOS / Linux
-./setup-links.sh
-
-# Windows
-setup-links.bat
-```
-
-### Platform Notes
-
-| Platform | Method | Admin Required |
-|----------|--------|----------------|
-| macOS/Linux | `ln -s` symlink | No |
-| Windows (CMD/Git Bash) | Junction (`mklink /J`) | No |
 
 ## Plugins
 

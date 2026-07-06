@@ -57,6 +57,14 @@ else
     warn "ANTHROPIC_AUTH_TOKEN skipped — key will not be present in settings.json."
 fi
 
+# --- Status line ---
+statusline_script="$SCRIPT_DIR/statusline-command.sh"
+if [ -f "$statusline_script" ]; then
+    config=$(echo "$config" | jq --arg cmd "bash \"$statusline_script\"" \
+        '.statusLine = {"type": "command", "command": $cmd}')
+    info "statusLine configured."
+fi
+
 # --- GovTech Claude Code tools ---
 echo ""
 read -rp "Install GovTech Claude Code tools? (runs: gt tools configure claude-code) [y/N] " gt_confirm

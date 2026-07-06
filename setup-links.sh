@@ -20,13 +20,6 @@ info()  { echo -e "${GREEN}[INFO]${NC}  $1"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC}  $1"; }
 error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-is_windows() {
-    case "$(uname -s)" in
-        CYGWIN*|MINGW*|MSYS*) return 0 ;;
-        *) return 1 ;;
-    esac
-}
-
 create_skill_link() {
     local source="$1"
     local target="$2"
@@ -37,22 +30,8 @@ create_skill_link() {
     fi
 
     mkdir -p "$(dirname "$target")"
-
-    if is_windows; then
-        local win_source=$(cygpath -w "$source" 2>/dev/null || echo "$source")
-        local win_target=$(cygpath -w "$target" 2>/dev/null || echo "$target")
-        cmd //c "mklink /J \"$win_target\" \"$win_source\"" > /dev/null 2>&1 && {
-            info "Linked: $name"
-        } || {
-            cmd //c "mklink /D \"$win_target\" \"$win_source\"" > /dev/null 2>&1 || {
-                error "Failed to create link for $name (may need Administrator)"
-                return 1
-            }
-        }
-    else
-        ln -s "$source" "$target"
-        info "Linked: $name"
-    fi
+    ln -s "$source" "$target"
+    info "Linked: $name"
 }
 
 # Step 1: ~/.claude → this repo

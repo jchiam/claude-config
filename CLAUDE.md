@@ -13,7 +13,7 @@ Personal Claude Code configuration. `~/.claude` is a symlink pointing here. Chan
 - `plugins/installed_plugins.json` + `plugins/known_marketplaces.json` — committed; define which plugins/marketplaces are registered.
 - `skills/*/` — each subdirectory is a slash command skill.
 
-## Setup commands
+## Setup commands (macOS / Linux / WSL)
 
 ```bash
 # First-time setup (new machine)
@@ -25,6 +25,8 @@ Personal Claude Code configuration. `~/.claude` is a symlink pointing here. Chan
 # Regenerate settings.json from template
 ./setup-settings.sh           # requires jq; prompts for auth token + optional GovTech gt tools
 ```
+
+Windows (PowerShell): see README.md § "Windows (PowerShell)" for manual setup steps.
 
 ## Settings flow
 
