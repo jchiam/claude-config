@@ -38,5 +38,12 @@ plugins/cache/
 plugins/data/
 plugins/marketplaces/
 plugins/install-counts-cache.json
+plugins/plugin-catalog-cache.json
 plugins/blocklist.json
 plugins/known_marketplaces.json
+
+# MCP runtime state
+mcp-needs-auth-cache.json
+
+# Serverless telemetry
+sls-telemetry/
