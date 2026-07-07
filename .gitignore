@@ -30,6 +30,8 @@ tasks/
 telemetry/
 
 # Feature flags / temp files
+.claude-auth-profile
+.claude-auth-token
 .caveman-active
 .gitkeep
 
