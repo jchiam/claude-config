@@ -1,16 +1,6 @@
 {
   "version": 2,
   "plugins": {
-    "code-simplifier@claude-plugins-official": [
-      {
-        "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0",
-        "version": "1.0.0",
-        "installedAt": "2026-04-12T17:43:10.307Z",
-        "lastUpdated": "2026-04-12T17:43:10.307Z",
-        "gitCommitSha": "7ed523140f506611c968a0ec32e1dfc40a1d5673"
-      }
-    ],
     "caveman@caveman": [
       {
         "scope": "user",
@@ -24,21 +14,21 @@
     "code-modernization@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/b58e5924a36a",
-        "version": "b58e5924a36a",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/a2fd5a2c7e88",
+        "version": "a2fd5a2c7e88",
         "installedAt": "2026-04-29T08:34:54.976Z",
-        "lastUpdated": "2026-07-06T06:08:58.891Z",
-        "gitCommitSha": "b58e5924a36a70ec22bdfb0e2fe59f7543834430"
+        "lastUpdated": "2026-07-07T02:20:58.146Z",
+        "gitCommitSha": "a2fd5a2c7e88ee5a9c09c4730bdf9d335457ae6f"
       }
     ],
     "claude-obsidian@claude-obsidian-marketplace": [
       {
         "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-obsidian-marketplace/claude-obsidian/1.6.0",
-        "version": "1.6.0",
-        "installedAt": "2026-04-30T08:39:03.326Z",
-        "lastUpdated": "2026-04-30T08:39:03.326Z",
-        "gitCommitSha": "75d3b6feb77b96c6bb16599c4550cc9703553d87"
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-obsidian-marketplace/claude-obsidian/1.9.2",
+        "version": "1.9.2",
+        "installedAt": "2026-07-08T03:12:15.858Z",
+        "lastUpdated": "2026-07-08T03:12:15.858Z",
+        "gitCommitSha": "cb93ff6d82f9c35a08bf6010e7fac36dfddc827b"
       }
     ],
     "moe-kb@moe-plugins": [
@@ -46,9 +36,19 @@
         "scope": "user",
         "installPath": "/Users/jchiam/.claude/plugins/cache/moe-plugins/moe-kb/1.0.0",
         "version": "1.0.0",
-        "installedAt": "2026-06-29T05:57:47.520Z",
-        "lastUpdated": "2026-06-29T05:57:47.520Z",
+        "installedAt": "2026-07-08T03:11:22.932Z",
+        "lastUpdated": "2026-07-08T03:11:22.932Z",
         "gitCommitSha": "6183a0df3f250ded2535f23760fab434f94ec6aa"
+      }
+    ],
+    "jchiam@jchiam-claude-skills": [
+      {
+        "scope": "user",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/jchiam-claude-skills/jchiam/0.1.1",
+        "version": "0.1.1",
+        "installedAt": "2026-07-08T07:33:04.845Z",
+        "lastUpdated": "2026-07-08T07:33:04.845Z",
+        "gitCommitSha": "e99dfb24ad4a3c852c7f311c29805d76b710213d"
       }
     ]
   }
