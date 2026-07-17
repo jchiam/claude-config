@@ -38,6 +38,12 @@ The template uses Bedrock models via `ANTHROPIC_BASE_URL` pointed at GovTech's p
 
 Each skill lives in `skills/<name>/` with a `SKILL.md` entry point. After adding a skill, run `./setup-links.sh` to symlink it into `~/.qoderwork/skills/` and `~/.qwen/skills/`.
 
+## Slack Content
+
+When ingesting or fetching Slack messages/threads, ALWAYS use `~/.claude/scripts/slack-fetch-thread.sh <slack-url>`. Never use WebFetch on Slack URLs (requires auth). The script reads the API token from macOS Keychain (`slack-api-token` service) and resolves user IDs to real names.
+
+Usage: `bash ~/.claude/scripts/slack-fetch-thread.sh <slack-url> [output-slug]`
+
 ## Git commits
 
 Use `--no-gpg-sign` on all commits in this repo — GPG signing is not configured here.
