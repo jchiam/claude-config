@@ -14,11 +14,11 @@
     "code-modernization@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/a2fd5a2c7e88",
-        "version": "a2fd5a2c7e88",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/ac093964a7d8",
+        "version": "ac093964a7d8",
         "installedAt": "2026-04-29T08:34:54.976Z",
-        "lastUpdated": "2026-07-07T02:20:58.146Z",
-        "gitCommitSha": "a2fd5a2c7e88ee5a9c09c4730bdf9d335457ae6f"
+        "lastUpdated": "2026-07-09T10:21:48.613Z",
+        "gitCommitSha": "ac093964a7d8e43c6571d960d488051468c7e366"
       }
     ],
     "claude-obsidian@claude-obsidian-marketplace": [
@@ -44,11 +44,11 @@
     "jchiam@jchiam-claude-skills": [
       {
         "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/jchiam-claude-skills/jchiam/0.1.1",
-        "version": "0.1.1",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/jchiam-claude-skills/jchiam/0.1.3",
+        "version": "0.1.3",
         "installedAt": "2026-07-08T07:33:04.845Z",
-        "lastUpdated": "2026-07-08T07:33:04.845Z",
-        "gitCommitSha": "e99dfb24ad4a3c852c7f311c29805d76b710213d"
+        "lastUpdated": "2026-07-17T15:37:27.518Z",
+        "gitCommitSha": "ff18ad984f09d0cf461b76b74b5cd665743aafb6"
       }
     ]
   }
