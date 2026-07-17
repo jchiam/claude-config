@@ -41,7 +41,8 @@
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(curl * | bash)",
-      "Bash(npx:*)"
+      "Bash(npx:*)",
+      "Bash(security find-generic-password:*)"
     ],
     "ask": [
       "Edit(~/.claude/settings.json)",
