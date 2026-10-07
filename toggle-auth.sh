@@ -12,6 +12,7 @@ SETTINGS="$SCRIPT_DIR/settings.json"
 PROFILES_DIR="$SCRIPT_DIR/profiles"
 MARKER_FILE="$SCRIPT_DIR/.claude-auth-profile"
 TOKEN_CACHE="$SCRIPT_DIR/.claude-auth-token"
+MODEL_STATE="$SCRIPT_DIR/.claude-auth-models.json"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -37,12 +38,30 @@ show_status() {
     fi
 }
 
+# Is $1 a model ID usable under profile $2? Aliases (opus, sonnet, haiku, ...) always pass.
+model_valid_for() {
+    local model="$1" profile_json="$2" target="$3"
+    case "$model" in
+        bedrock.*)
+            [ "$target" = "api" ] && echo "$profile_json" | jq -e --arg m "$model" \
+                '[.env[], .modelOverrides[]?] | index($m)' >/dev/null
+            ;;
+        claude-*)
+            [ "$target" = "sub" ] || echo "$profile_json" | jq -e --arg m "${model%%\[*}" \
+                '.modelOverrides | has($m)' >/dev/null
+            ;;
+        *) return 0 ;;
+    esac
+}
+
 switch_profile() {
     local target="$1"
-    local profile_env="$PROFILES_DIR/${target}.env.json"
+    local from
+    from=$(current_profile)
+    local profile_file="$PROFILES_DIR/${target}.json"
 
-    if [ ! -f "$profile_env" ]; then
-        echo -e "${RED}Profile not found:${NC} $profile_env"
+    if [ ! -f "$profile_file" ]; then
+        echo -e "${RED}Profile not found:${NC} $profile_file"
         exit 1
     fi
 
@@ -56,36 +75,47 @@ switch_profile() {
         exit 1
     fi
 
-    # Read profile env vars
-    local new_env
-    new_env=$(cat "$profile_env")
+    local profile
+    profile=$(cat "$PROFILES_DIR/${target}.json")
 
-    # Rebuild settings: remove model-related env vars, merge profile env, handle modelOverrides
     local config
     config=$(cat "$SETTINGS")
+
+    # Remember the model selected under the profile we're leaving
+    local models='{}'
+    [ -f "$MODEL_STATE" ] && models=$(cat "$MODEL_STATE")
+    models=$(echo "$models" | jq --arg p "$from" --argjson c "$config" \
+        'if $c.model then .[$p] = $c.model else del(.[$p]) end')
+    echo "$models" > "$MODEL_STATE"
 
     # Remove switching-related env keys (all ANTHROPIC_DEFAULT_*, ANTHROPIC_CUSTOM_*, base URL, auth token)
     config=$(echo "$config" | jq '.env |= with_entries(select(
         .key | (startswith("ANTHROPIC_DEFAULT_") or startswith("ANTHROPIC_CUSTOM_") or . == "ANTHROPIC_BASE_URL" or . == "ANTHROPIC_AUTH_TOKEN") | not
     ))')
 
-    # Merge profile env vars
-    config=$(echo "$config" | jq --argjson penv "$new_env" '.env += $penv')
+    # Apply profile: merge env, replace modelOverrides / companyAnnouncements (removed if profile lacks them)
+    config=$(echo "$config" | jq --argjson p "$profile" '
+        .env += $p.env
+        | del(.modelOverrides, .companyAnnouncements)
+        | . + ($p | with_entries(select(.key == "modelOverrides" or .key == "companyAnnouncements")))
+    ')
 
-    # Add/remove modelOverrides and org settings based on profile
+    # Restore the model last used under the target profile, else the profile default
+    local model
+    model=$(echo "$models" | jq -r --arg p "$target" '.[$p] // empty')
+    if [ -n "$model" ] && ! model_valid_for "$model" "$profile" "$target"; then
+        echo -e "${YELLOW}Note:${NC} saved model '$model' not available on $target, using default"
+        model=""
+    fi
+    [ -z "$model" ] && model=$(echo "$profile" | jq -r '.defaultModel // empty')
+    if [ -n "$model" ]; then
+        config=$(echo "$config" | jq --arg m "$model" '.model = $m')
+    else
+        config=$(echo "$config" | jq 'del(.model)')
+    fi
+
     if [ "$target" = "api" ]; then
-        config=$(echo "$config" | jq '.modelOverrides = {
-            "claude-haiku-4-5-20251001": "bedrock.claude-haiku-4-5",
-            "claude-sonnet-4-5-20250929": "bedrock.claude-sonnet-4-5",
-            "claude-sonnet-4-6": "bedrock.claude-sonnet-4-6",
-            "claude-opus-4-5-20251101": "bedrock.claude-opus-4-5",
-            "claude-opus-4-6": "bedrock.claude-opus-4-6"
-        }')
-
-        # Restore company announcement
-        config=$(echo "$config" | jq '.companyAnnouncements = ["Claude Code managed by GovTech - https://go.gov.sg/gt-cc-managed-settings"]')
-
-        # Re-inject auth token: try env first, then cached file, then current settings
+        # Re-inject auth token: try env first, then cached file
         local token="${ANTHROPIC_AUTH_TOKEN:-}"
         if [ -z "$token" ] && [ -f "$TOKEN_CACHE" ]; then
             token=$(cat "$TOKEN_CACHE")
@@ -98,9 +128,6 @@ switch_profile() {
         else
             echo -e "${YELLOW}Note:${NC} No cached API token. Run setup-settings.sh or: export ANTHROPIC_AUTH_TOKEN=... && claude-auth api"
         fi
-    else
-        # Subscription mode: remove modelOverrides and org-specific settings
-        config=$(echo "$config" | jq 'del(.modelOverrides, .companyAnnouncements)')
     fi
 
     echo "$config" > "$SETTINGS"
@@ -111,6 +138,7 @@ switch_profile() {
     else
         echo -e "${GREEN}Switched to:${NC} API key (GovTech Bedrock)"
     fi
+    echo -e "${CYAN}Model:${NC} ${model:-default}  (restart claude to apply)"
 }
 
 case "${1:-}" in
