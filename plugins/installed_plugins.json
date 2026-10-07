@@ -14,11 +14,11 @@
     "code-modernization@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/ac093964a7d8",
-        "version": "ac093964a7d8",
+        "installPath": "/Users/jchiam/.claude/plugins/cache/claude-plugins-official/code-modernization/1.0.0",
+        "version": "1.0.0",
         "installedAt": "2026-04-29T08:34:54.976Z",
-        "lastUpdated": "2026-07-09T10:21:48.613Z",
-        "gitCommitSha": "ac093964a7d8e43c6571d960d488051468c7e366"
+        "lastUpdated": "2026-09-27T22:53:41.199Z",
+        "gitCommitSha": "fa59bc9037741ecfa131aa27938272605710d7b2"
       }
     ],
     "claude-obsidian@claude-obsidian-marketplace": [
